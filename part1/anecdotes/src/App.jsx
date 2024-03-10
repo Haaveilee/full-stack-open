@@ -3,9 +3,41 @@ import { useState } from 'react'
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
+
+const Title = (props) => {
+    return (
+        <h1>{props.text}</h1>
+    )
+}
+
 const Displayer = (props) => {
     return (
         <p>{props.text}</p>
+    )
+}
+
+const Votes = (props) => {
+    if (props.value == 1) {
+        return (
+            <p>This anecdote has {props.value} vote</p>
+        )
+    } else {
+        return (
+            <p>This anecdote has {props.value} votes</p>
+        )
+    }
+}
+
+const MostVoted = (props) => {
+
+    const indexOfMax = props.points.indexOf(Math.max(...props.points))
+    const votesOfMax = props.points[indexOfMax]
+
+    return (
+        <div>
+            <Displayer text={props.anecdotes[indexOfMax]}/>
+            <Votes value={votesOfMax}/>
+        </div>
     )
 }
 const App = () => {
@@ -19,16 +51,20 @@ const App = () => {
         'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
         'The only way to go fast, is to go well.'
     ]
+    const defaultPoints = new Array(8).fill(0)
 
     const [selected, setSelected] = useState(getRandomInt(8))
-
-    console.log(selected);
-
+    const [points] = useState(defaultPoints)
 
     return (
         <div>
+            <Title text={"Anecdote of the day"}/>
             <Displayer text={anecdotes[selected]}/>
+            <Votes value={points[selected]} />
+            <button onClick={() => points[selected]=points[selected]+1}>Vote</button>
             <button onClick={() => setSelected(getRandomInt(8))}>Next Anecdote</button>
+            <Title text={"Anecdote with most votes:"}/>
+            <MostVoted points={points} anecdotes={anecdotes}/>
         </div>
 
     )
