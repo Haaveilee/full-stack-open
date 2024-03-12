@@ -12,28 +12,41 @@ const Contact = (props) => {
 
 const App = () => {
     const [persons, setPersons] = useState([
-        { name: 'Arto Hellas',
-          phone: '040-123456'}
+        { name: 'Arto Hellas', number: '040-123456', id: 1 },
+        { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+        { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+        { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
     ])
     const [newName, setNewName] = useState('')
     const [newPhone, setNewPhone] = useState('')
+    const [filtered, setFiltered] = useState('')
+
+    const contactsToShow = filtered
+        ? persons.filter(person => person.name.toLowerCase().includes(filtered.toLowerCase()))
+        : persons;
 
     const newNameHandler = (event) => {
         event.preventDefault()
         setNewName(event.target.value)
-        console.log('button clicked', event.target.value)
+        console.log('new name clicked: ', event.target.value)
     }
 
     const newPhoneHandler = (event) => {
         event.preventDefault()
         setNewPhone(event.target.value)
-        console.log('button clicked', event.target.value)
+        console.log('new phone clicked: ', event.target.value)
+    }
+
+    const filteredHandler = (event) => {
+        event.preventDefault()
+        setFiltered(event.target.value)
+        console.log('filter clicked: ', event.target.value)
     }
 
     const addContact = (event) => {
         const contact = {
             name: newName,
-            phone: newPhone
+            number: newPhone
         }
         console.log(newName, newPhone)
         console.log(contact)
@@ -50,6 +63,10 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            Filter shown with <input
+                value={filtered}
+                onChange={filteredHandler}/>
+            <h2>Add new...</h2>
             <form>
                 <div>
                     name: <input
@@ -66,10 +83,8 @@ const App = () => {
                 </div>
             </form>
             <h2>Numbers</h2>
-            debug: {newName}
-            debug: {newPhone}
-            {persons.map(persons =>
-                <Contact key={persons.name} name={persons.name} number={persons.phone}/>
+            {contactsToShow.map(persons =>
+                <Contact key={persons.name} name={persons.name} number={persons.number}/>
             )}
         </div>
     )
