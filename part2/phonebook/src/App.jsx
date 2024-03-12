@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
-const Name = (props) => {
+const Contact = (props) => {
     return (
         <div>
             <p>
-                {props.name}
+                {props.name} {props.number}
             </p>
         </div>
     )
@@ -12,9 +12,11 @@ const Name = (props) => {
 
 const App = () => {
     const [persons, setPersons] = useState([
-        { name: 'Arto Hellas' }
+        { name: 'Arto Hellas',
+          phone: '040-123456'}
     ])
     const [newName, setNewName] = useState('')
+    const [newPhone, setNewPhone] = useState('')
 
     const newNameHandler = (event) => {
         event.preventDefault()
@@ -22,18 +24,27 @@ const App = () => {
         console.log('button clicked', event.target.value)
     }
 
-    const addName = (event) => {
-        const person = {
+    const newPhoneHandler = (event) => {
+        event.preventDefault()
+        setNewPhone(event.target.value)
+        console.log('button clicked', event.target.value)
+    }
+
+    const addContact = (event) => {
+        const contact = {
             name: newName,
+            phone: newPhone
         }
+        console.log(newName, newPhone)
+        console.log(contact)
         event.preventDefault()
         if (newName !== persons[persons.length - 1].name) {
-            setPersons(persons.concat(person))
+            setPersons(persons.concat(contact))
         } else {
             alert(`${newName} is already added to phonebook`)
         }
-
         setNewName('')
+        setNewPhone('')
     }
 
     return (
@@ -46,13 +57,19 @@ const App = () => {
                         onChange={newNameHandler}/>
                 </div>
                 <div>
-                    <button type="submit" onClick={addName}>add</button>
+                    phone: <input
+                    value={newPhone}
+                    onChange={newPhoneHandler}/>
+                </div>
+                <div>
+                    <button type="submit" onClick={addContact}>add</button>
                 </div>
             </form>
             <h2>Numbers</h2>
             debug: {newName}
+            debug: {newPhone}
             {persons.map(persons =>
-                <Name key={persons.name} name={persons.name}/>
+                <Contact key={persons.name} name={persons.name} number={persons.phone}/>
             )}
         </div>
     )
