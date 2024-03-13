@@ -26,23 +26,8 @@ const Part = (props) => {
     )
 }
 
-const Content2 = (props) => {
-    //const titles = props.courses.map(courses => courses.name)
-    //console.log(titles)
-    const parts = props.courses.map(courses => courses.parts)
-    console.log(parts)
-
-    return (
-        <div>
-            {props.courses.map(courses => <Title key={courses.id} title={courses.name}/>
-            )}
-        </div>
-        //{props.courses.parts.map(part => <Part key={part.id} part={part}/>)}
-    )
-}
-
 const Content = (props) => {
-    //{props.parts.map(part => <Part key={props.parts.id} name={props.parts.name} exercises={props.parts.exercises}/>)}
+
     console.log("props: ", props)
     console.log("props.parts: ", props.parts)
     const parties = new Array (props.parts)
