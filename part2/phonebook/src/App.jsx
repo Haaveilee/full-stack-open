@@ -49,11 +49,14 @@ const App = () => {
             name: newName,
             number: newPhone
         }
-        console.log(newName, newPhone)
-        console.log(contact)
         event.preventDefault()
         if (newName !== persons[persons.length - 1].name) {
             setPersons(persons.concat(contact))
+            axios
+                .post('http://localhost:3001/persons', contact)
+                .then(response => {
+                    console.log(response)
+                })
         } else {
             alert(`${newName} is already added to phonebook`)
         }
