@@ -15,12 +15,29 @@ const create = newObject => {
     })
 }
 
-//const update = (id, newObject) => {
-//    return axios.put(`${baseUrl}/${id}`, newObject)
-//}
+const erase = (id) => {
+    const urlToDelete = baseUrl + "/" + id
+    const request = axios.delete(urlToDelete)
+    return request.then(response => {
+        return response.data
+    })
+}
+
+const replace = (id, updatedContact) => {
+    const urlToUpdate = baseUrl + "/" + id
+    const request = axios.put(urlToUpdate, {
+        id: id,
+        name: updatedContact.name,
+        number: updatedContact.number,
+    })
+    return request.then(response => {
+        return response.data
+    })
+}
 
 export default {
     getAll: getAll,
     create: create,
-    //update: update
+    erase: erase,
+    replace: replace
 }
