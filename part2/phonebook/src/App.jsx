@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
 import contactsService from "./services/Contacts";
 
 const App = () => {
@@ -10,6 +11,8 @@ const App = () => {
     const [newName, setNewName] = useState('')
     const [newPhone, setNewPhone] = useState('')
     const [filtered, setFiltered] = useState('')
+    const [message, setMessage] = useState('')
+    const [messageClass, setMessageClass] = useState('')
 
     useEffect(() => {
         contactsService
@@ -51,7 +54,15 @@ const App = () => {
             contactsService
                 .create(contact)
                 .then(contact => {
-                    setPersons(persons.concat(contact))
+                    setPersons(persons.concat(contact)
+                    );
+                    setMessageClass('eventMessage')
+                    setMessage(
+                        `${contact.name} was successfully created`
+                    )
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 5000)
                 })
             setNewName('')
             setNewPhone('')
@@ -65,9 +76,26 @@ const App = () => {
                         const updatedPersons = persons.map(person =>
                             person.id === updatedContact.id ? updatedContact : person
                         );
-                        setPersons(updatedPersons);
-                        setNewName('');
-                        setNewPhone('');
+                        setMessageClass('eventMessage')
+                        setMessage(
+                            `The number of ${existingContact.name} has been replaced`
+                        )
+                        setTimeout(() => {
+                            setMessage(null)
+                        }, 5000)
+                        setPersons(updatedPersons)
+                        setNewName('')
+                        setNewPhone('')
+                    })
+                    .catch(error => {
+                        setMessage(
+                            `The information of ${existingContact.name} were already deleted from the server`
+                        )
+                        setTimeout(() => {
+                            setMessage(null)
+                        }, 5000);
+                        setMessageClass('error')
+                        setPersons(persons.filter(person => person.id !== existingContact.id))
                     })
             }
         }
@@ -76,6 +104,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={message} messageClass={messageClass} />
             <Filter value={filtered} onChange={filteredHandler} />
             <h3>Add a new</h3>
             <PersonForm
