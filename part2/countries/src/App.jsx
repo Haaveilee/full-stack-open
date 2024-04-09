@@ -1,35 +1,65 @@
 import axios from "axios";
 import { useState, useEffect } from 'react';
 
-const Countries = ({countries}) => {
-    if (countries.length >= 10) {
+const Country = (props) => {
+    const showHandler = (event) => {
+        event.preventDefault()
+        console.log("clicked", props.id, props.name)
+        props.toShow(props.id)
+    }
+
+    return (
+       <div>
+           <p>{props.name} <button type="submit" onClick={showHandler}>show</button></p>
+       </div>
+    )
+}
+
+const CountryToShow = (props) => {
+    console.log(props)
+
+    return (
+        <div>
+            <h2>{props.countryToShow.name.common}</h2>
+            <p>Capital: {props.countryToShow.capital[0]}</p>
+            <p>Area: {props.countryToShow.area}</p>
+            <ul>
+                {Object.keys(props.countryToShow.languages).map(key =>
+                    <li key={props.countryToShow.languages[key]}>{props.countryToShow.languages[key]}</li>
+                )}
+            </ul>
+            <img src={props.countryToShow.flags.png} width='10%' />
+        </div>
+    )
+}
+
+const Countries = ({filteredCountries, setFilteredCountries}) => {
+
+    const toShow = (id) => {
+        console.log(filteredCountries)
+        setFilteredCountries(filteredCountries.filter(country => country.ccn3 === id))
+        console.log(filteredCountries)
+    }
+
+    if (filteredCountries.length >= 10) {
         return (
             <p>Too many matches, specify another filter</p>
         )
-    } else if (countries.length > 1) {
+    } else if (filteredCountries.length > 1) {
+
         return (
-            <>
-                {countries.map(country => {
-                    return (
-                        <p key={country.ccn3}>{country.name.common}</p>
-                    )
-                })}
-            </>
+            <div>
+                {filteredCountries.map((country) => (
+                    <Country key={country.ccn3} name={country.name.common} id={country.ccn3} toShow={toShow}/>
+                ))}
+            </div>
         )
-    } else if (countries.length === 1) {
-        const selectedCountry = countries[0];
+    } else if (filteredCountries.length === 1) {
+
         return (
-            <>
-                <h2>{selectedCountry.name.common}</h2>
-                <p>Capital: {selectedCountry.capital[0]}</p>
-                <p>Area: {selectedCountry.area}</p>
-                <ul>
-                    {Object.keys(selectedCountry.languages).map(key =>
-                        <li key={selectedCountry.languages[key]}>{selectedCountry.languages[key]}</li>
-                    )}
-                </ul>
-                <img src={selectedCountry.flags.png} width='10%' />
-            </>
+            <div>
+                <CountryToShow countryToShow={filteredCountries[0]}/>
+            </div>
         )
     }
 }
@@ -63,7 +93,7 @@ const App = () => {
     return (
         <div>
             Find a country: <input onChange={filterCountries} />
-            <Countries countries={filteredCountries} />
+            <Countries filteredCountries={filteredCountries} setFilteredCountries={setFilteredCountries} />
         </div>
     )
 }
