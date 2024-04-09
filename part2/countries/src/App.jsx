@@ -17,10 +17,13 @@ const Country = (props) => {
 
 const CountryToShow = (props) => {
     const weather_api_key = import.meta.env.VITE_WEATHER_KEY
-    const [weather, setWeather] = useState([])
+    const [weather, setWeather] = useState(null)
 
     console.log(props)
     const weatherApiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + props.countryToShow.capital[0] + "&appid=" + weather_api_key
+    console.log(weatherApiUrl)
+
+    console.log(weather)
 
     const hook = () => {
         console.log('weather hooked')
@@ -31,8 +34,17 @@ const CountryToShow = (props) => {
                 setWeather(response.data)
                 console.log(weather)
             })
+            .catch(error => {
+                console.log("an error has occurred")
+            })
     }
     useEffect(hook, []);
+
+    if (!weather) {
+        console.log("loading data...")
+        return null
+    }
+
 
     const iconLink = "https://openweathermap.org/img/wn/" + weather.weather[0].icon +"@2x.png"
     console.log(weather.weather[0].icon)
