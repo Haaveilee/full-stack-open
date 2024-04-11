@@ -1,33 +1,36 @@
-require('dotenv').config()
-const express = require('express')
-const mongoose = require('mongoose')
-const Contact = require('./models/contact')
-const morgan = require('morgan')
-const cors = require('cors')
-const app = express()
-const PORT = process.env.PORT
-app.use(express.json())
-app.use(morgan('tiny'))
-app.use(cors())
-app.use(express.static('dist'))
-app.use((req, res, next) => {
-    if (req.method === 'POST') {
-        console.log('Body: ', req.body)
-    }
-    next()
-})
 
+const express = require('express')
+const app = express()
+require('dotenv').config()
+const Contact = require('./models/contact')
+app.use(express.static('dist'))
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:  ', request.path)
+    console.log('Body:  ', request.body)
+    console.log('---')
+    next()
+}
+
+const cors = require('cors')
+app.use(cors())
+app.use(express.json())
+app.use(requestLogger)
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message })
+    }
+
+    next(error)
+}
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
 }
-
-const generateId = () => {
-    const maxId = phonebook.length > 0
-        ? Math.max(...phonebook.map(n => n.id))
-        : 0
-    return maxId + 1
-}
-
 
 
 app.get('/info', (request, response) => {
@@ -92,7 +95,7 @@ app.delete('/api/persons/:id', (request, response,next) => {
 
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response,next) => {
     const body = request.body
 
     if (body.name === undefined) {
@@ -109,7 +112,7 @@ app.post('/api/persons', (request, response) => {
         console.log(message)
         response.json(result)
 
-    })
+    }).catch(error => next(error))
 
 })
 
@@ -130,22 +133,11 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 
 app.use(unknownEndpoint)
-const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
-
-    if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
-    } else if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message })
-    }
-
-    next(error)
-}
 
 // this has to be the last loaded middleware.js, also all the routes should be registered before this!
 app.use(errorHandler)
 
-
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
