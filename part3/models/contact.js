@@ -25,7 +25,16 @@ const phonebookSchema = new mongoose.Schema({
 },
     number: {
         type: String,
-        required: true
+        minLength: 8,
+        validate: {
+            validator: function(v) {
+                // Regular expression to match the phone number format
+                const phoneNumberRegex = /^(?:\d{2,3}-\d+)$/;
+                return phoneNumberRegex.test(v);
+            },
+            message: props => `${props.value} is not a valid phone number! Please use the format xx-xxxxxxxx(x) or xxx-xxxxxxxx(x).`
+        },
+        required: [true, 'Phone number is required']
     },
 })
 //const Contact = mongoose.model('Contact', phonebookSchema)
