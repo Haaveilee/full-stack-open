@@ -1,14 +1,28 @@
+DELETE http://localhost:3003/api/blogs/661ad082ad111d28c9540dcb
+###
+PUT http://localhost:3003/api/blogs/6617f304a28bfb7c6dd55431 HTTP/1.1
+Content-Type: application/json
 
+{
+  "title": "titless",
+  "author": "author",
+  "url": "url",
+  "likes": 123
+}
+###
 GET http://localhost:3003/info
 ###
 GET http://localhost:3003/api/blogs
 ###
 POST http://localhost:3003/api/blogs HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pbGFkIiwiaWQiOiI2NjFiZGU5YTQ3ZDZlZTlhM2ZjOWI4Y2UiLCJpYXQiOjE3MTMxMDY4MTB9.qiLD8nqwDsp5rQokCUU-Oz3gfSc8ADTNfaV1VyLkj64
 
 {
   "title": "title",
   "author": "author",
-  "url": "url",
-  "likes": 123
+  "url": "url"
 }
+
+###
+POST http://localhost:3003/api/testing/reset HTTP/1.1
